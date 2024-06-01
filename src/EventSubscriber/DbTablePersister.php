@@ -15,16 +15,11 @@ use Tightenco\Collect\Support\Collection;
 
 class DbTablePersister extends AbstractPersistSubscriber implements EventSubscriberInterface
 {
-    /** @var QueryBuilder */
-    private $query;
+    private QueryBuilder $query;
 
-    /** @var Logger */
-    private $log;
-
-    public function __construct(Connection $connection, LoggerInterface $log)
+    public function __construct(Connection $connection, private readonly LoggerInterface $log)
     {
         $this->query = $connection->createQueryBuilder();
-        $this->log = $log;
     }
 
     public function save(PostSubmitEvent $event, Form $form, Collection $config): void

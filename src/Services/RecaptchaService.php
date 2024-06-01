@@ -9,28 +9,17 @@ use Bolt\BoltForms\Extension;
 use Bolt\Extension\ExtensionRegistry;
 use Symfony\Component\HttpFoundation\Request;
 
-class RecaptchaService
+readonly class RecaptchaService
 {
-    public const POST_FIELD_NAME = 'g-recaptcha-response';
-    public const RECAPTCHA_VERSION_2 = 'recaptcha_v2';
-    public const RECAPTCHA_VERSION_3 = 'recaptcha_v3';
+    public const string POST_FIELD_NAME = 'g-recaptcha-response';
+    public const string RECAPTCHA_VERSION_2 = 'recaptcha_v2';
+    public const string RECAPTCHA_VERSION_3 = 'recaptcha_v3';
 
-    /** @var ExtensionRegistry */
-    private $registry;
+    private string $secretKey;
+    private float $v3Threshold;
+    private string $recaptchaVersion;
 
-    /** @var string */
-    private $secretKey;
-
-    /** @var float */
-    private $v3Threshold;
-
-    /** @var string */
-    private $recaptchaVersion;
-
-    public function __construct(ExtensionRegistry $extensionRegistry)
-    {
-        $this->registry = $extensionRegistry;
-    }
+    public function __construct(private ExtensionRegistry $extensionRegistry) {}
 
     public function setKeys(?string $siteKey = null, string $secretKey): void
     {

@@ -13,17 +13,10 @@ use Tightenco\Collect\Support\Collection;
 
 class EmailFactory
 {
-    /** @var Form */
-    private $form;
-
-    /** @var Collection */
-    private $config;
-
-    /** @var Collection */
-    private $notification;
-
-    /** @var Collection */
-    private $formConfig;
+    private Form $form;
+    private Collection $config;
+    private Collection $notification;
+    private Collection $formConfig;
 
     /**
      * @param Collection $formConfig The config specific for the current form

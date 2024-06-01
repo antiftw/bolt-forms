@@ -13,23 +13,11 @@ use Tightenco\Collect\Support\Collection;
 
 class BoltFormsConfig
 {
-    /** @var ExtensionRegistry */
-    private $registry;
+    private ?Collection $config = null;
+    private ?ExtensionInterface $extension = null;
 
-    /** @var Config */
-    private $boltConfig;
-
-    /** @var Collection */
-    private $config = null;
-
-    /** @var ExtensionInterface */
-    private $extension = null;
-
-    public function __construct(ExtensionRegistry $registry, Config $boltConfig)
-    {
-        $this->registry = $registry;
-        $this->boltConfig = $boltConfig;
-    }
+    public function __construct(private readonly ExtensionRegistry $registry, private readonly Config $boltConfig)
+    {}
 
     public function getConfig(): Collection
     {

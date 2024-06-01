@@ -33,24 +33,17 @@ use Symfony\Component\Form\FormInterface;
  */
 class BoltFormsEvent extends FormEvent
 {
-    /** @var FormEvent */
-    protected $event;
 
     /** @var array */
     protected $data = [];
 
-    /** @var FormInterface */
-    protected $form;
+    protected FormInterface $form;
 
-    /** @var string */
-    protected $formsEventName;
-
-    public function __construct(FormEvent $event, string $formsEventName)
-    {
+    public function __construct(
+        private readonly FormEvent $event,
+        private readonly string $formsEventName
+    ) {
         parent::__construct($event->getForm(), $event->getData());
-
-        $this->event = $event;
-        $this->formsEventName = $formsEventName;
     }
 
     public function getEvent(): FormEvent

@@ -10,20 +10,13 @@ use Tightenco\Collect\Support\Collection;
 
 class PostSubmitEventDispatcher
 {
-    /** @var BoltFormsConfig */
-    private $config;
+    private Collection $dispatchedForms;
 
-    /** @var Collection */
-    private $dispatchedForms;
-
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
-
-    public function __construct(BoltFormsConfig $config, EventDispatcherInterface $dispatcher)
-    {
-        $this->config = $config;
+    public function __construct(
+        private readonly BoltFormsConfig $config,
+        private readonly EventDispatcherInterface $dispatcher
+    ) {
         $this->dispatchedForms = collect([]);
-        $this->dispatcher = $dispatcher;
     }
 
     public function handle(string $formName, Form $form, Request $request): void

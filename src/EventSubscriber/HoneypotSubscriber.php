@@ -11,8 +11,7 @@ use Symfony\Component\Form\FormError;
 
 class HoneypotSubscriber implements EventSubscriberInterface
 {
-    /** @var PostSubmitEvent */
-    private $event;
+    private PostSubmitEvent $event;
 
     public function __construct()
     {
@@ -40,14 +39,14 @@ class HoneypotSubscriber implements EventSubscriberInterface
             }
 
             if ($action === 'block') {
-                $event->getForm()->addError(new FormError('An extra special error occured.'));
+                $event->getForm()->addError(new FormError('An extra special error occurred.'));
             }
         }
 
         return $event;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'boltforms.post_submit' => ['handleEvent', 50],

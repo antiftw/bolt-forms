@@ -4,58 +4,31 @@ declare(strict_types=1);
 
 namespace Bolt\BoltForms;
 
-use Bolt\BoltForms\Event\PostSubmitEvent;
 use Bolt\BoltForms\Event\PostSubmitEventDispatcher;
 use Bolt\Twig\Notifications;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class FormRuntime implements RuntimeExtensionInterface
 {
-    /** @var Notifications */
-    private $notifications;
-
-    /** @var FormBuilder */
-    private $builder;
-
-    /** @var Environment */
-    private $twig;
-
-    /** @var Request */
-    private $request;
-
-    /** @var EventDispatcher */
-    private $dispatcher;
-
-    /** @var BoltFormsConfig */
-    private $config;
-
-    /** @var PostSubmitEventDispatcher */
-    private $postSubmitEventDispatcher;
+    private Request$request;
 
     public function __construct(
-        Notifications $notifications,
-        Environment $twig,
-        FormBuilder $builder,
+        private readonly Notifications $notifications,
+        private readonly Environment $twig,
+        private readonly FormBuilder $builder,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly BoltFormsConfig $config,
+        private readonly PostSubmitEventDispatcher $postSubmitEventDispatcher,
         RequestStack $requestStack,
-        EventDispatcherInterface $dispatcher,
-        BoltFormsConfig $boltFormsConfig,
-        PostSubmitEventDispatcher $postSubmitEventDispatcher
     ) {
-        $this->notifications = $notifications;
-        $this->twig = $twig;
-        $this->builder = $builder;
         $this->request = $requestStack->getCurrentRequest();
-        $this->dispatcher = $dispatcher;
-        $this->config = $boltFormsConfig;
-        $this->postSubmitEventDispatcher = $postSubmitEventDispatcher;
     }
 
-    public function run(string $formName = '', array $data = [], bool $warn = true)
+    public function run(string $formName = '', array $data = [], bool $warn = true): ?string
     {
         $config = $this->config->getConfig();
         $extension = $this->config->getExtension();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bolt\BoltForms\Event;
 
 use Bolt\BoltForms\BoltFormsConfig;
+use Bolt\Extension\ExtensionInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,32 +14,16 @@ use Tightenco\Collect\Support\Collection;
 
 class PostSubmitEvent extends Event
 {
-    public const NAME = 'boltforms.post_submit';
+    public const string NAME = 'boltforms.post_submit';
+    private bool $spam = false;
+    private Collection $attachments;
 
-    /** @var Form */
-    private $form;
-
-    /** @var Collection */
-    private $config;
-
-    /** @var string */
-    private $formName;
-
-    /** @var bool */
-    private $spam = false;
-
-    /** @var Request */
-    private $request;
-
-    /** @var Collection */
-    private $attachments;
-
-    public function __construct(Form $form, BoltFormsConfig $config, string $formName, Request $request)
-    {
-        $this->form = $form;
-        $this->config = $config;
-        $this->formName = $formName;
-        $this->request = $request;
+    public function __construct(
+        private readonly Form $form,
+        private readonly BoltFormsConfig $config,
+        private readonly string $formName,
+        private readonly Request $request
+    ) {
         $this->attachments = collect([]);
     }
 
@@ -52,7 +37,7 @@ class PostSubmitEvent extends Event
         return $this->form;
     }
 
-    public function getExtension()
+    public function getExtension(): ?ExtensionInterface
     {
         return $this->config->getExtension();
     }

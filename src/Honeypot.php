@@ -7,23 +7,14 @@ namespace Bolt\BoltForms;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilder as SymfonyFormBuilder;
 
-class Honeypot
+readonly class Honeypot
 {
-    /** @var SymfonyFormBuilder */
-    private $formBuilder;
 
-    /** @var string */
-    private $formName;
-
-    public function __construct(string $formName, ?SymfonyFormBuilder $formBuilder = null)
-    {
-        $this->formName = $formName;
-        $this->formBuilder = $formBuilder;
-    }
+    public function __construct(private string $formName, private ?SymfonyFormBuilder $formBuilder = null) {}
 
     public function addField(): void
     {
-        $fieldname = $this->generateFieldName();
+        $fieldName = $this->generateFieldName();
 
         $options = [
             'required' => false,
@@ -33,7 +24,7 @@ class Honeypot
             ],
         ];
 
-        $this->formBuilder->add($fieldname, TextType::class, $options);
+        $this->formBuilder->add($fieldName, TextType::class, $options);
     }
 
     public function generateFieldName($withFormName = false): string
@@ -58,8 +49,11 @@ class Honeypot
         return implode('_', $parts);
     }
 
-    public function isenabled(): bool
+    public function isEnabled(): bool
     {
-        return $this->config->get('honeypot', false);
+        return false;
+        // Not sure what this was doing here, does not seem to be used
+        // also $this->config does not exist ? So IDE is complaining
+        // return $this->config->get('honeypot', false);
     }
 }

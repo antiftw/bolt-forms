@@ -9,6 +9,7 @@ use Bolt\Common\Str;
 use Bolt\Log\LoggerTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tightenco\Collect\Support\Collection;
 
@@ -16,11 +17,9 @@ class Redirect implements EventSubscriberInterface
 {
     use LoggerTrait;
 
-    /** @var PostSubmitEvent */
-    private $event;
-
-    /** @var Collection */
-    private $feedback;
+    private PostSubmitEvent $event;
+    private Collection $feedback;
+    private Collection $formConfig;
 
     public function handleEvent(PostSubmitEvent $event): void
     {
@@ -90,7 +89,7 @@ class Redirect implements EventSubscriberInterface
         return '/' . ltrim($url, '/');
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'boltforms.post_submit' => ['handleEvent', 5],

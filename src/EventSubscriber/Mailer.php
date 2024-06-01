@@ -17,19 +17,10 @@ class Mailer implements EventSubscriberInterface
 {
     use LoggerTrait;
 
-    /** @var PostSubmitEvent */
-    private $event;
+    private PostSubmitEvent $event;
+    private Collection $notification;
 
-    /** @var MailerInterface */
-    private $mailer;
-
-    /** @var Collection */
-    private $notification;
-
-    public function __construct(MailerInterface $mailer)
-    {
-        $this->mailer = $mailer;
-    }
+    public function __construct(private readonly MailerInterface $mailer) {}
 
     public function handleEvent(PostSubmitEvent $event): void
     {
@@ -57,7 +48,7 @@ class Mailer implements EventSubscriberInterface
             [
                 'formname' => $this->event->getFormName(),
                 // is this casting right?
-                'recipient' => (string) $email->getTo()[0]->getName(),
+                'recipient' => $email->getTo()[0]->getName(),
             ]
         );
     }
@@ -76,7 +67,7 @@ class Mailer implements EventSubscriberInterface
         return $email;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'boltforms.post_submit' => ['handleEvent', 30],

@@ -9,23 +9,14 @@ use Bolt\BoltForms\Extension;
 use Bolt\Extension\ExtensionRegistry;
 use Symfony\Component\HttpFoundation\Request;
 
-class HcaptchaService
+readonly class HcaptchaService
 {
-    public const POST_FIELD_NAME = 'h-captcha-response';
+    public const string POST_FIELD_NAME = 'h-captcha-response';
 
-    /** @var ExtensionRegistry */
-    private $registry;
+    private string $secretKey;
+    private string $siteKey;
 
-    /** @var string */
-    private $secretKey;
-
-    /** @var string */
-    private $siteKey;
-
-    public function __construct(ExtensionRegistry $extensionRegistry)
-    {
-        $this->registry = $extensionRegistry;
-    }
+    public function __construct(private ExtensionRegistry $registry) {}
 
     public function setKeys(string $siteKey, string $secretKey): void
     {
@@ -33,7 +24,7 @@ class HcaptchaService
         $this->secretKey = $secretKey;
     }
 
-    public function validateTokenFromRequest(Request $request)
+    public function validateTokenFromRequest(Request $request): true|string
     {
         $extension = $this->registry->getExtension(Extension::class);
 

@@ -11,24 +11,15 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilder as SymfonyFormBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Tightenco\Collect\Support\Collection;
 
 class FormBuilder
 {
-    /** @var FormFactory */
-    private $formFactory;
+    private bool $hasRecaptchaV2Invisible = false;
+    private bool $hasRecaptchaV3 = false;
 
-    /** @var bool */
-    private $hasRecaptchaV2Invisible = false;
-
-    /** @var bool */
-    private $hasRecaptchaV3 = false;
-
-    public function __construct(FormFactoryInterface $formFactory)
-    {
-        $this->formFactory = $formFactory;
-    }
+    public function __construct(private readonly FormFactoryInterface $formFactory) {}
 
     public function build(string $formName, array $data, Collection $config, EventDispatcherInterface $eventDispatcher): Form
     {
@@ -74,7 +65,7 @@ class FormBuilder
 
         switch ($field['options']['captcha_type']) {
             case 'recaptcha_v3':
-                if (! $config->has('recaptcha') || ! (bool) ($config->get('recaptcha')['enabled'])) {
+                if (! $config->has('recaptcha') || ! ($config->get('recaptcha')['enabled'])) {
                     // Allow users to simply disable CAPTCHA protection by flipping the flag
                     return;
                 }
@@ -91,12 +82,12 @@ class FormBuilder
                 break;
 
             case 'recaptcha_v2':
-                if (! $config->has('recaptcha') || ! (bool) ($config->get('recaptcha')['enabled'])) {
+                if (! $config->has('recaptcha') || ! ($config->get('recaptcha')['enabled'])) {
                     // Allow users to simply disable CAPTCHA protection by flipping the flag
                     return;
                 }
 
-                $this->hasRecaptchaV2Invisible = isset($field['options']['captcha_invisible']) && (bool) ($field['options']['captcha_invisible']);
+                $this->hasRecaptchaV2Invisible = isset($field['options']['captcha_invisible']) && ($field['options']['captcha_invisible']);
 
                 if (! isset($config['recaptcha']['public_key'])) {
                     throw new \Exception('You must specify your site key using the public_key option under the recaptcha node in your forms config.');
@@ -108,7 +99,7 @@ class FormBuilder
                 break;
 
             case 'hcaptcha':
-                if (! $config->has('hcaptcha') || ! (bool) ($config->get('hcaptcha')['enabled'])) {
+                if (! $config->has('hcaptcha') || !($config->get('hcaptcha')['enabled'])) {
                     // Allow users to simply disable CAPTCHA protection by flipping the flag
                     return;
                 }
@@ -145,7 +136,7 @@ class FormBuilder
                 //Used to converted snake case into camel case
                 $splitFormName = explode("_", $formName);
                 if (count($splitFormName) > 1) {
-                    foreach ($splitFormName as $item) {
+                    foreach ($splitFormName as &$item) {
                         $item = ucfirst($item);
                     }
                     $formNameJs = join("", $splitFormName);
@@ -169,7 +160,7 @@ class FormBuilder
             }
 
             // Merge our attributes with any existing ones defined in the config
-            // If a CSS class is already defined, append our new class instead of merging so it doesn't end up as an
+            // If a CSS class is already defined, append our new class instead of merging, so it doesn't end up as an
             // array instead of a string
             if (isset($field['options']['attr']['class'])) {
                 $attr['class'] = sprintf('%s %s', $field['options']['attr']['class'], $attr['class']);

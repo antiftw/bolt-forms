@@ -8,7 +8,7 @@ use Symfony\Component\Form\Exception\RuntimeException;
 
 class FieldConstraints
 {
-    public const SF_NAMESPACE = '\\Symfony\\Component\\Validator\\Constraints\\';
+    public const string SF_NAMESPACE = '\\Symfony\\Component\\Validator\\Constraints\\';
 
     public static function get(string $formName, array $field): array
     {

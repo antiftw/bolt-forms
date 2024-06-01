@@ -6,7 +6,7 @@ namespace Bolt\BoltForms\Factory;
 
 use Bolt\BoltForms\Validator\Constraints\Hcaptcha;
 use Bolt\BoltForms\Validator\Constraints\Recaptcha;
-use PixelOpen\CloudflareTurnstileBundle\Constraints\CloudflareTurnstile;
+use PixelOpen\CloudflareTurnstileBundle\Validator\CloudflareTurnstile;
 use Tightenco\Collect\Support\Collection;
 
 class FieldOptions

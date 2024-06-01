@@ -17,25 +17,12 @@ use Tightenco\Collect\Support\Collection;
 
 class ContentTypePersister extends AbstractPersistSubscriber implements EventSubscriberInterface
 {
-    /** @var Config */
-    private $boltConfig;
-
-    /** @var UserRepository */
-    private $userRepository;
-
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var string */
-    private $projectDir;
-
-    public function __construct(Config $boltConfig, UserRepository $userRepository, EntityManagerInterface $em, string $projectDir = '')
-    {
-        $this->boltConfig = $boltConfig;
-        $this->userRepository = $userRepository;
-        $this->em = $em;
-        $this->projectDir = $projectDir;
-    }
+    public function __construct(
+        private readonly Config $boltConfig,
+        private readonly UserRepository $userRepository,
+        private readonly EntityManagerInterface $em,
+        private readonly string $projectDir = ''
+    ) {}
 
     public function save(PostSubmitEvent $event, Form $form, Collection $config): void
     {

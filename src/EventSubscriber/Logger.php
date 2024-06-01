@@ -14,11 +14,8 @@ class Logger implements EventSubscriberInterface
 {
     use LoggerTrait;
 
-    /** @var PostSubmitEvent */
-    private $event;
-
-    /** @var Collection */
-    private $notification;
+    private PostSubmitEvent $event;
+    private Collection $notification;
 
     public function __construct()
     {
@@ -66,7 +63,7 @@ class Logger implements EventSubscriberInterface
         $this->event->getExtension()->dump('Submitted form data was logged in the System log.');
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'boltforms.post_submit' => ['handleEvent', 10],

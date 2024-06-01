@@ -16,19 +16,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tightenco\Collect\Support\Collection;
 use Symfony\Component\Filesystem\Path;
 
-class FileUploadHandler implements EventSubscriberInterface
+readonly class FileUploadHandler implements EventSubscriberInterface
 {
-    /** @var string */
-    private $projectDir;
-
-    /** @var FormHelper */
-    private $helper;
-
-    public function __construct(string $projectDir = '', FormHelper $helper)
-    {
-        $this->helper = $helper;
-        $this->projectDir = $projectDir;
-    }
+    public function __construct(private string $projectDir = '', private FormHelper $helper)
+    { }
 
     public function handleEvent(PostSubmitEvent $event): void
     {
@@ -60,9 +51,9 @@ class FileUploadHandler implements EventSubscriberInterface
         }
     }
 
-    private function getFilename(string $fieldname, Form $form, Collection $formConfig): string
+    private function getFilename(string $fieldName, Form $form, Collection $formConfig): string
     {
-        $filenameFormat = $formConfig->get('fields')[$fieldname]['file_format'] ?? 'Uploaded file' . uniqid();
+        $filenameFormat = $formConfig->get('fields')[$fieldName]['file_format'] ?? 'Uploaded file' . uniqid();
         $filename = $this->helper->get($filenameFormat, $form);
 
         if (! $filename) {
@@ -72,10 +63,7 @@ class FileUploadHandler implements EventSubscriberInterface
         return $filename;
     }
 
-    /**
-     * @param UploadedFile|array $file
-     */
-    private function uploadFiles(string $filename, $file, string $path = ''): array
+    private function uploadFiles(string $filename, array|UploadedFile $file, string $path = ''): array
     {
         $uploadPath = $this->projectDir . $path;
         $uploadHandler = new Handler($uploadPath, [
@@ -126,7 +114,7 @@ class FileUploadHandler implements EventSubscriberInterface
         return $filename . '.' . $extension;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'boltforms.post_submit' => ['handleEvent', 40],
